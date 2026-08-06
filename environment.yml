@@ -1,0 +1,6 @@
+name: doc_chat
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+prefix: /scratch/htc/lmoellenbrock/conda/envs/doc_chat

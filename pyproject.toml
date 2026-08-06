@@ -1,0 +1,19 @@
+[project]
+name = "doc_chat"
+version = "0.1.0"
+description = "A local RAG system built with Hugging Face"
+requires-python = ">=3.11"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
