@@ -6,3 +6,9 @@ class Document:
     source: Path
     page_number: int
     text: str
+
+@dataclass(slots=True)
+class Chunk:
+    source: Path
+    page_number: int
+    text: str
