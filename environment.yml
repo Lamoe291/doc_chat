@@ -3,4 +3,8 @@ channels:
   - defaults
 dependencies:
   - python=3.11
+  - pip
+  - pip:
+      - sentence-transformers
+      - numpy
 prefix: /scratch/htc/lmoellenbrock/conda/envs/doc_chat

@@ -3,50 +3,14 @@ from typing import Literal
 
 from doc_chat.models import Chunk, Document
 
-
 class TextChunker:
     """Chunk documents with configurable granularity and overlap."""
 
-    def chunk(
+    def __init__(
         self,
-        doc: Document,
         granularity: Literal["characters", "words", "paragraphs"] = "characters",
         chunk_size: int = 1000,
         chunk_overlap: int = 100,
-    ) -> list[Chunk]:
-        """Chunk a document into smaller pieces."""
-
-        self._validate_parameters(granularity, chunk_size, chunk_overlap)
-
-        if not doc.text:
-            return []
-
-        if granularity == "characters":
-            chunk_texts = self._chunk_characters(doc.text, chunk_size, chunk_overlap)
-        elif granularity == "words":
-            words = doc.text.split()
-            chunk_texts = self._chunk_units(words, joiner=" ", chunk_size=chunk_size, chunk_overlap=chunk_overlap)
-        else:
-            paragraphs = [
-                p.strip() for p in re.split(r"\n\s*\n+", doc.text) if p.strip()
-            ]
-            chunk_texts = self._chunk_units(
-                paragraphs,
-                joiner="\n\n",
-                chunk_size=chunk_size,
-                chunk_overlap=chunk_overlap,
-            )
-
-        return [
-            Chunk(source=doc.source, page_number=doc.page_number, text=text)
-            for text in chunk_texts
-        ]
-
-    def _validate_parameters(
-        self,
-        granularity: str,
-        chunk_size: int,
-        chunk_overlap: int,
     ) -> None:
         if granularity not in {"characters", "words", "paragraphs"}:
             raise ValueError(
@@ -59,13 +23,37 @@ class TextChunker:
         if chunk_overlap >= chunk_size:
             raise ValueError("chunk_overlap must be smaller than chunk_size")
 
-    def _chunk_characters(self, text: str, chunk_size: int, chunk_overlap: int) -> list[str]:
-        step = chunk_size - chunk_overlap
+        self.granularity = granularity
+        self.chunk_size = chunk_size
+        self.chunk_overlap = chunk_overlap
+
+    def chunk(self, doc: Document) -> list[Chunk]:
+        """Chunk a document into smaller pieces."""
+
+        if not doc.text:
+            return []
+
+        if self.granularity == "characters":
+            chunk_texts = self._chunk_characters(doc.text)
+        elif self.granularity == "words":
+            words = doc.text.split()
+            chunk_texts = self._chunk_units(words, joiner=" ")
+        else:
+            paragraphs = [p.strip() for p in re.split(r"\n\s*\n+", doc.text) if p.strip()]
+            chunk_texts = self._chunk_units(paragraphs, joiner="\n\n")
+
+        return [
+            Chunk.from_document(doc, i, text)
+            for i, text in enumerate(chunk_texts)
+        ]
+
+    def _chunk_characters(self, text: str) -> list[str]:
+        step = self.chunk_size - self.chunk_overlap
         chunks: list[str] = []
         start = 0
 
         while start < len(text):
-            end = min(start + chunk_size, len(text))
+            end = min(start + self.chunk_size, len(text))
             chunks.append(text[start:end])
             if end == len(text):
                 break
@@ -73,22 +61,16 @@ class TextChunker:
 
         return chunks
 
-    def _chunk_units(
-        self,
-        units: list[str],
-        joiner: str,
-        chunk_size: int,
-        chunk_overlap: int,
-    ) -> list[str]:
+    def _chunk_units(self, units: list[str], joiner: str) -> list[str]:
         if not units:
             return []
 
-        step = chunk_size - chunk_overlap
+        step = self.chunk_size - self.chunk_overlap
         chunks: list[str] = []
         start = 0
 
         while start < len(units):
-            end = min(start + chunk_size, len(units))
+            end = min(start + self.chunk_size, len(units))
             chunks.append(joiner.join(units[start:end]))
             if end == len(units):
                 break
@@ -97,3 +79,4 @@ class TextChunker:
         return chunks
 
 
+ 
