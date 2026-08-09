@@ -38,3 +38,8 @@ class Chunk:
             page_number=doc.page_number,
             text=chunk_text,
         )
+
+@dataclass(slots=True)
+class SearchResult:
+    chunk: Chunk
+    score: float
