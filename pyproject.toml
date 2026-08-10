@@ -6,7 +6,8 @@ requires-python = ">=3.11"
 dependencies = [
 	"numpy",
 	"sentence-transformers",
-	"faiss-cpu"
+	"faiss-cpu",
+	"transformers"
 ]
 
 [build-system]
