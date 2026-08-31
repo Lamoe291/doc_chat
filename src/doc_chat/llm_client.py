@@ -1,7 +1,7 @@
 from transformers import pipeline
 
 class LLMClient:
-    def __init__(self, model_name: str):
+    def __init__(self, model_name: str) -> None:
         self.model_name = model_name
         self.generator = pipeline("text-generation", model=model_name)
         # Initialize the LLM client with the specified model name
