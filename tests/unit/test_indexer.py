@@ -1,14 +1,15 @@
 from pathlib import Path
 import pytest
 from doc_chat.models import Chunk
+from doc_chat.models import Document
 
 from doc_chat.indexer import Indexer
 
 class FakePDFLoader:
     def load(self, pdf_path: Path):
         return [
-            {"source": pdf_path, "page_number": 1, "text": "Page 1 text"},
-            {"source": pdf_path, "page_number": 2, "text": "Page 2 text"},
+            Document(source=pdf_path, page_number=1, text="Page 1 text"),
+            Document(source=pdf_path, page_number=2, text="Page 2 text"),
         ]
 
 class FakeChunker:
@@ -37,5 +38,6 @@ def test_indexer():
     )
 
     indexer.index(Path("sample.pdf"))
-    assert len(indexer.vector_store.store) == 2
+    #print(indexer.vector_store.store)
+    assert len(indexer.vector_store.store) == 4  # 2 pages * 2 chunks per page
 

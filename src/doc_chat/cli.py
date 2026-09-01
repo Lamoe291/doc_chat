@@ -1,3 +1,4 @@
+from pathlib import Path
 from doc_chat.pdf_loader import PDFLoader
 from doc_chat.chunker import TextChunker
 from doc_chat.embedder import Embedder
@@ -7,17 +8,18 @@ from doc_chat.llm_client import LLMClient
 from doc_chat.prompt_builder import PromptBuilder
 from doc_chat.rag_pipeline import RAGPipeline
 from doc_chat.indexer import Indexer
-from doc_chat.config import EMBEDDING_BACKBONE_NAME, LLM_MODEL_NAME
+from doc_chat.config import EMBEDDING_MODEL_NAME, LLM_MODEL_NAME
 
-def run(pdf_path: str) -> None:
+def run(pdf_path: Path) -> None:
     # Initialize components
-    loader = PDFLoader(pdf_path)
-    chunker = TextChunker(granularity="words", chunk_size=200, chunk_overlap=50)  # Adjust granularity as needed
-    embedder = Embedder(backbone_name=EMBEDDING_BACKBONE_NAME)
-    vector_store = VectorStore(embedding_dim=embedder.backbone.get_sentence_embedding_dimension())
+    loader = PDFLoader()
+    chunker = TextChunker(granularity="words", chunk_size=300, chunk_overlap=50)  # Adjust granularity as needed
+    embedder = Embedder(backbone_name=EMBEDDING_MODEL_NAME)
+    vector_store = VectorStore(embedding_dimension=embedder.backbone.get_embedding_dimension())
     retriever = Retriever(embedder, vector_store)
     prompt_builder = PromptBuilder()
     llm_client = LLMClient(model_name=LLM_MODEL_NAME)
+    #print(llm_client.generator.generation_config)
 
     # Index the PDF
     indexer = Indexer(loader, chunker, embedder, vector_store)
@@ -40,5 +42,5 @@ def run(pdf_path: str) -> None:
         if not query:
             continue
 
-        answer = pipeline.ask(query)
+        answer = rag_pipeline.ask(query)
         print(f"\n{answer}\n")

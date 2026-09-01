@@ -7,11 +7,11 @@ from doc_chat.models import Chunk, SearchResult
 
 
 class VectorStore:
-    def __init__(self, embedding_dimension: int):
+    def __init__(self, embedding_dimension: int, index: faiss.IndexFlatIP | None = None, chunks: list[Chunk] | None = None):
         self.embedding_dimension = embedding_dimension
-        self.index = faiss.IndexFlatIP(self.embedding_dimension)
+        self.index = index if index is not None else faiss.IndexFlatIP(self.embedding_dimension)
         #self.vectors: np.ndarray = np.empty((0, self.embedding_dimension), dtype=np.float32)
-        self.chunks: list[Chunk] = []
+        self.chunks = chunks if chunks is not None else []
         
 
     def add(self, chunks: list[Chunk], embeddings: np.ndarray) -> None:
