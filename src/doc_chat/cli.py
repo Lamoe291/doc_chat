@@ -67,7 +67,7 @@ def index_command(args):
 def chat_command(args):
     embedder = Embedder(backbone_name=EMBEDDING_MODEL_NAME)
     index_store = IndexStore()
-    index_directory = Path("data/indexes") / args.pdf_path.stem
+    index_directory = Path("data/indexes") / args.index
     vector_store = index_store.load(index_directory)
     print(f"Loaded {vector_store.index.ntotal} chunks from the index.")
     
@@ -92,7 +92,7 @@ def chat_command(args):
         print(f"\n{answer}\n")
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(
         description="Chat with your PDF documents."
     )
@@ -128,8 +128,14 @@ def main() -> None:
         help="Chat with the indexed document.",
     )
 
+    chat_parser.add_argument(
+        "--index",
+        required=True,
+        help="Name of the index to chat with.",
+    )
+
     chat_parser.set_defaults(func=chat_command)
 
     # Parse arguments and execute command
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     args.func(args)
