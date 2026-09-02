@@ -1,15 +1,12 @@
-import sys
-from pathlib import Path
-
-from doc_chat.cli import run
+from doc_chat.cli import main
 
 
-def main() -> None:
-    if len(sys.argv) != 2:
-        print("Usage: python -m doc_chat <pdf>")
-        sys.exit(1)
+# def main() -> None:
+#     if len(sys.argv) != 2:
+#         print("Usage: python -m doc_chat <pdf>")
+#         sys.exit(1)
 
-    run(Path(sys.argv[1]))
+#     run(Path(sys.argv[1]))
 
 
 if __name__ == "__main__":
