@@ -9,6 +9,21 @@ from doc_chat.models import Chunk
 
 import pytest
 
+def test_directory_creation_on_save():
+    embedding_dimension = 4
+    chunks = [Chunk(id=str(i), source="fake_source", page_number=i, text=f"text {i}") for i in range(3)]
+    embeddings = np.random.rand(3, embedding_dimension).astype(np.float32)
+    vector_store = VectorStore(embedding_dimension=embedding_dimension)
+    vector_store.add(chunks, embeddings)
+
+    index_store = IndexStore()
+    with tempfile.TemporaryDirectory() as tmpdir:
+        dir_path = Path(tmpdir) / "directory" #/ "index.faiss"
+        index_store.save(vector_store, dir_path)
+        assert dir_path.exists()
+        assert (dir_path / "index.faiss").exists()
+        assert (dir_path / "chunks.json").exists()
+
 def test_save_and_load_index_store():
     embedding_dimension = 4
     chunks = [Chunk(id=str(i), source="fake_source", page_number=i, text=f"text {i}") for i in range(3)]
@@ -18,7 +33,7 @@ def test_save_and_load_index_store():
 
     index_store = IndexStore()
     with tempfile.TemporaryDirectory() as tmpdir:
-        index_path = Path(tmpdir) / "index.faiss"
+        index_path = Path(tmpdir) #/ "index.faiss"
         index_store.save(vector_store, index_path)
         loaded_vector_store = index_store.load(index_path)
 
@@ -28,3 +43,25 @@ def test_save_and_load_index_store():
             assert original_chunk.id == loaded_chunk.id
             assert original_chunk.text == loaded_chunk.text
         assert loaded_vector_store.index.ntotal == vector_store.index.ntotal
+
+def test_retrieval_after_save_and_load():
+    embedding_dimension = 4
+    chunks = [Chunk(id=str(i), source="fake_source", page_number=i, text=f"text {i}") for i in range(3)]
+    embeddings = np.random.rand(3, embedding_dimension).astype(np.float32)
+    vector_store = VectorStore(embedding_dimension=embedding_dimension)
+    vector_store.add(chunks, embeddings)
+
+    query_embedding = np.random.rand(1, embedding_dimension).astype(np.float32)
+
+    results_before_save = vector_store.search(query_embedding=query_embedding, top_k=2)
+
+    index_store = IndexStore()
+    with tempfile.TemporaryDirectory() as tmpdir:
+        index_path = Path(tmpdir) / "index.faiss"
+        index_store.save(vector_store, index_path)
+        loaded_vector_store = index_store.load(index_path)
+
+        results_after_load = loaded_vector_store.search(query_embedding=query_embedding, top_k=2)
+
+        assert [r.chunk.id for r in results_after_load] == [r.chunk.id for r in results_before_save]
+        assert [r.score for r in results_after_load] == [r.score for r in results_before_save]
