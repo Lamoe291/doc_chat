@@ -12,7 +12,13 @@ import pytest
 def test_directory_creation_on_save():
     embedding_dimension = 4
     chunks = [Chunk(id=str(i), source="fake_source", page_number=i, text=f"text {i}") for i in range(3)]
-    embeddings = np.random.rand(3, embedding_dimension).astype(np.float32)
+    rng = np.random.default_rng(42)
+
+    embeddings = rng.random(
+        (3, embedding_dimension),
+        dtype=np.float32,
+    )
+    #embeddings = np.random.rand(3, embedding_dimension).astype(np.float32)
     vector_store = VectorStore(embedding_dimension=embedding_dimension)
     vector_store.add(chunks, embeddings)
 
@@ -27,7 +33,12 @@ def test_directory_creation_on_save():
 def test_save_and_load_index_store():
     embedding_dimension = 4
     chunks = [Chunk(id=str(i), source="fake_source", page_number=i, text=f"text {i}") for i in range(3)]
-    embeddings = np.random.rand(3, embedding_dimension).astype(np.float32)
+    rng = np.random.default_rng(42)
+    embeddings = rng.random(
+        (3, embedding_dimension),
+        dtype=np.float32,
+    )
+    #embeddings = np.random.rand(3, embedding_dimension).astype(np.float32)
     vector_store = VectorStore(embedding_dimension=embedding_dimension)
     vector_store.add(chunks, embeddings)
 
@@ -47,7 +58,12 @@ def test_save_and_load_index_store():
 def test_retrieval_after_save_and_load():
     embedding_dimension = 4
     chunks = [Chunk(id=str(i), source="fake_source", page_number=i, text=f"text {i}") for i in range(3)]
-    embeddings = np.random.rand(3, embedding_dimension).astype(np.float32)
+    rng = np.random.default_rng(42)
+    embeddings = rng.random(
+        (3, embedding_dimension),
+        dtype=np.float32,
+    )
+    #embeddings = np.random.rand(3, embedding_dimension).astype(np.float32)
     vector_store = VectorStore(embedding_dimension=embedding_dimension)
     vector_store.add(chunks, embeddings)
 
