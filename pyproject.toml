@@ -7,7 +7,9 @@ dependencies = [
 	"numpy",
 	"sentence-transformers",
 	"faiss-cpu",
-	"transformers"
+	"transformers",
+	"pymupdf",
+	"torch"
 ]
 
 [build-system]
