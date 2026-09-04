@@ -68,6 +68,8 @@ Ask questions about the document by:
 ```bash
 python -m doc_chat chat --index my_pdf
 ```
+The questioning with the document can be ended by typing `exit`.
 
 ## Limitations
+
 Metadata questions, such as asking for a paper’s title or authors, may perform worse than semantic content questions because the current system relies on vector retrieval over extracted text.
