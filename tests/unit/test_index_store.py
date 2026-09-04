@@ -32,7 +32,7 @@ def test_directory_creation_on_save(tmp_path: Path):
 
 def test_save_and_load_index_store(tmp_path: Path): 
     embedding_dimension = 4
-    chunks = [Chunk(id=str(i), source="fake_source", page_number=i, text=f"text {i}") for i in range(3)]
+    chunks = [Chunk(id=str(i), source=Path("fake_source"), page_number=i, text=f"text {i}") for i in range(3)]
     rng = np.random.default_rng(42)
     embeddings = rng.random(
         (3, embedding_dimension),
@@ -53,7 +53,9 @@ def test_save_and_load_index_store(tmp_path: Path):
     for original_chunk, loaded_chunk in zip(vector_store.chunks, loaded_vector_store.chunks):
         assert original_chunk.id == loaded_chunk.id
         assert original_chunk.text == loaded_chunk.text
+        assert original_chunk.source == loaded_chunk.source
     assert loaded_vector_store.index.ntotal == vector_store.index.ntotal
+    
 
 def test_retrieval_after_save_and_load(tmp_path: Path):
     embedding_dimension = 4

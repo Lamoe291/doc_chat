@@ -27,6 +27,8 @@ class PDFLoader:
                 text = clean_text(text)
                 if text:
                     documents.append(Document(source=pdf_path, page_number=i+1, text=text))
+                    #print first page
+                    #if i == 0: print("first page: \n", text)
         return documents
     
 

@@ -49,7 +49,7 @@ from doc_chat.config import EMBEDDING_MODEL_NAME, LLM_MODEL_NAME
 
 def index_command(args):
     loader = PDFLoader()
-    chunker = TextChunker(granularity="words", chunk_size=300, chunk_overlap=50)  # Adjust granularity as needed
+    chunker = TextChunker(granularity="words", chunk_size=200, chunk_overlap=50)  # Adjust granularity as needed
     embedder = Embedder(backbone_name=EMBEDDING_MODEL_NAME)
     vector_store = VectorStore(embedding_dimension=embedder.backbone.get_embedding_dimension())
     indexer = Indexer(loader, chunker, embedder, vector_store)
@@ -68,6 +68,14 @@ def chat_command(args):
     embedder = Embedder(backbone_name=EMBEDDING_MODEL_NAME)
     index_store = IndexStore()
     index_directory = Path("data/indexes") / args.index
+
+
+    if not index_directory.exists():
+        raise FileNotFoundError(
+            f"Index not found: {index_directory}. "
+            "Run the index command first."
+        )
+    
     vector_store = index_store.load(index_directory)
     print(f"Loaded {vector_store.index.ntotal} chunks from the index.")
     

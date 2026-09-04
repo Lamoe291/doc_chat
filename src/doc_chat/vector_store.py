@@ -51,4 +51,12 @@ class VectorStore:
             if idx < 0:
                 continue
             results.append(SearchResult(chunk=self.chunks[idx], score=float(score)))
+
+        # for i, result in enumerate(results):
+        #     print(f"\n{'=' * 80}")
+        #     print(f"Rank: {i + 1}")
+        #     print(f"Score: {result.score:.4f}")
+        #     print(f"Page: {result.chunk.page_number}")
+        #     print(f"Chunk ID: {result.chunk.id}")
+        #     print(result.chunk.text[:1000])
         return results
