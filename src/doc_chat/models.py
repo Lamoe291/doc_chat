@@ -43,3 +43,8 @@ class Chunk:
 class SearchResult:
     chunk: Chunk
     score: float
+
+@dataclass
+class RAGResponse:
+    answer: str
+    sources: list[SearchResult]

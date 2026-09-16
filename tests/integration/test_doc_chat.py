@@ -95,6 +95,6 @@ def test_rag_pipeline_end_to_end(tmp_path):
         llm_client=llm_client,
     )
 
-    answer = pipeline.ask("What is the capital of France?")
+    rag_response = pipeline.ask("What is the capital of France?")
 
-    assert answer == "The capital of France is Paris."
+    assert rag_response.answer == "The capital of France is Paris."

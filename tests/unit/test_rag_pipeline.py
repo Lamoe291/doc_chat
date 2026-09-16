@@ -35,6 +35,9 @@ def test_ask_runs_rag_flow():
         llm,
     )
 
-    answer = pipeline.ask("What is attention?", top_k=3)
+    rag_response = pipeline.ask("What is attention?", top_k=1)
 
-    assert answer == "test answer"
+    assert rag_response.answer == "test answer"
+    assert len(rag_response.sources) == 1
+    assert rag_response.sources[0].chunk.source == Path("test_doc.pdf")
+    assert rag_response.sources[0].chunk.page_number == 1

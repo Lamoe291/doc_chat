@@ -96,8 +96,12 @@ def chat_command(args):
         if not query:
             continue
 
-        answer = rag_pipeline.ask(query)
+        rag_response = rag_pipeline.ask(query)
+        answer = rag_response.answer
         print(f"\n{answer}\n")
+        print("Sources:")
+        for result in rag_response.sources:
+            print(f"- Source: {result.chunk.source}, Page: {result.chunk.page_number}, Score: {result.score:.4f}")
 
 
 def main(argv: list[str] | None = None) -> None:

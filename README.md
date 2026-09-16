@@ -68,7 +68,7 @@ Ask questions about the document by:
 ```bash
 python -m doc_chat chat --index my_pdf
 ```
-The questioning with the document can be ended by typing `exit`.
+The questioning of the document can be ended by typing `exit`.
 
 ## Limitations
 
