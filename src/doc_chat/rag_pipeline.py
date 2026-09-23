@@ -15,6 +15,8 @@ class RAGPipeline:
         self.llm_client = llm_client
 
     def ask(self, query: str, top_k: int = 5) -> RAGResponse:
+        if not query.strip():
+            raise ValueError("Question cannot be empty.")
         results = self.retriever.retrieve(query, top_k=top_k)
         prompt = self.prompt_builder.build(query, results)
         answer = self.llm_client.generate(prompt)

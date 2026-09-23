@@ -54,8 +54,15 @@ def index_command(args):
     vector_store = VectorStore(embedding_dimension=embedder.backbone.get_embedding_dimension())
     indexer = Indexer(loader, chunker, embedder, vector_store)
 
-    indexer.index(args.pdf_path)
-    print(f"Indexed {vector_store.index.ntotal} chunks.")
+    try:
+        indexer.index(args.pdf_path)
+        print(f"Indexed {vector_store.index.ntotal} chunks.")
+    except FileNotFoundError as exc:
+        print(f"Error: {exc}")
+        return 1
+    except ValueError as exc:
+        print(f"Error: {exc}")
+        return 1
 
     index_store = IndexStore()
     index_name = args.pdf_path.stem
