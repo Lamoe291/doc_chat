@@ -1,13 +1,14 @@
 import numpy as np
 from sentence_transformers import SentenceTransformer
+from doc_chat.config import settings
 
 
 class Embedder:
 
     def __init__(self, backbone_name: str) -> None:
-        if backbone_name != "BAAI/bge-small-en-v1.5":
+        if backbone_name != settings.embedding_model:
             raise ValueError(
-                "backbone_name must be 'BAAI/bge-small-en-v1.5'"
+                f"backbone_name must be '{settings.embedding_model}'"
             )
         
         self.backbone_name = backbone_name

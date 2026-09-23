@@ -10,7 +10,7 @@ from doc_chat.prompt_builder import PromptBuilder
 from doc_chat.rag_pipeline import RAGPipeline
 from doc_chat.indexer import Indexer
 from doc_chat.index_store import IndexStore
-from doc_chat.config import EMBEDDING_MODEL_NAME, LLM_MODEL_NAME
+from doc_chat.config import settings
 
 # def run(pdf_path: Path) -> None:
 #     # Initialize components
@@ -49,8 +49,8 @@ from doc_chat.config import EMBEDDING_MODEL_NAME, LLM_MODEL_NAME
 
 def index_command(args):
     loader = PDFLoader()
-    chunker = TextChunker(granularity="words", chunk_size=200, chunk_overlap=50)  # Adjust granularity as needed
-    embedder = Embedder(backbone_name=EMBEDDING_MODEL_NAME)
+    chunker = TextChunker(granularity="words", chunk_size=settings.chunk_size, chunk_overlap=settings.chunk_overlap)  # Adjust granularity as needed
+    embedder = Embedder(backbone_name=settings.embedding_model)
     vector_store = VectorStore(embedding_dimension=embedder.backbone.get_embedding_dimension())
     indexer = Indexer(loader, chunker, embedder, vector_store)
 
@@ -65,7 +65,7 @@ def index_command(args):
     #run(args.pdf_path)
 
 def chat_command(args):
-    embedder = Embedder(backbone_name=EMBEDDING_MODEL_NAME)
+    embedder = Embedder(backbone_name=settings.embedding_model)
     index_store = IndexStore()
     index_directory = Path("data/indexes") / args.index
 
@@ -81,7 +81,7 @@ def chat_command(args):
     
     retriever = Retriever(embedder, vector_store)
     prompt_builder = PromptBuilder()
-    llm_client = LLMClient(model_name=LLM_MODEL_NAME)
+    llm_client = LLMClient(model_name=settings.llm_model)
     rag_pipeline = RAGPipeline(retriever, prompt_builder, llm_client)
 
     print(f"Indexed {vector_store.index.ntotal} chunks.")
@@ -96,7 +96,7 @@ def chat_command(args):
         if not query:
             continue
 
-        rag_response = rag_pipeline.ask(query)
+        rag_response = rag_pipeline.ask(query, top_k=settings.top_k)
         answer = rag_response.answer
         print(f"\n{answer}\n")
         print("Sources:")
